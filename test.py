@@ -1,23 +1,19 @@
 import pytest
-from main import count_vowels
+from main import get_random_cat_image
 
-def test_all_vowels():
-    assert count_vowels("аеиоуыэюяАЕИОУЫЭЮЯ") == len("аеиоуыэюяАЕИОУЫЭЮЯ")
+def test_get_random_cat_image_success(mocker):
+    mock_get = mocker.patch('main.requests.get')
+    mock_get.return_value.status_code = 200
+    mock_get.return_value.json.return_value = [{"url": "https://cdn2.thecatapi.com/images/abc123.jpg"}]
 
-def test_no_vowels():
-    assert count_vowels("bcdfghjklmnpqrstvwxyz") == 0
+    result = get_random_cat_image()
 
-def test_mixed_string():
-    assert count_vowels("Привет друзья!") == 4
+    assert result == "https://cdn2.thecatapi.com/images/abc123.jpg"
 
-def test_empty_string():
-    assert count_vowels("") == 0
+def test_get_random_cat_image_failure(mocker):
+    mock_get = mocker.patch('main.requests.get')
+    mock_get.return_value.status_code = 404
 
-@pytest.mark.parametrize("input_string, expected_count", [
-    ("Учеба", 3),
-    ("Тест", 1),
-    ("1234", 0),
-    ("Поздравляю!", 4),
-])
-def test_parametrized(input_string, expected_count):
-    assert count_vowels(input_string) == expected_count
+    result = get_random_cat_image()
+
+    assert result is None

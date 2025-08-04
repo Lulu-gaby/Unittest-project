@@ -1,7 +1,7 @@
-def count_vowels(s):
-    vowels = 'аеиоуыэюяАЕИОУЫЭЮЯ'
-    count = 0
-    for letter in s:
-        if letter in vowels:
-            count += 1
-    return count
+import requests
+
+def get_random_cat_image():
+    response = requests.get("https://api.thecatapi.com/v1/images/search")
+    if response.status_code == 200:
+        return response.json()[0]["url"]
+    return None
